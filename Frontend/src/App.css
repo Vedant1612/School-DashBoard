@@ -1,0 +1,158 @@
+/* Root and other container styles */
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Main layout for the dashboard */
+.flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* Background white card with padding and shadow */
+.bg-white {
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 300px; /* Prevent boxes from shrinking too much */
+}
+
+/* Ensure the textarea is resizable and has proper styling */
+textarea {
+  resize: vertical; /* Allows vertical resizing */
+  overflow: auto; /* Prevent overflow */
+  min-height: 120px; /* Start with a minimum height */
+  height: auto;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Flex grid for layout */
+.grid-cols-1 {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Flex behavior for card-like boxes */
+.box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-grow: 1;
+}
+
+.card-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* For the specific layout */
+.grid-cols-1 {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr); /* Two columns on medium screens */
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid-cols-3 {
+    grid-template-columns: repeat(3, 1fr); /* Three columns on larger screens */
+  }
+}
+
+/* Specific layout for Upload Document and Add Comment side by side */
+.upload-comment-section {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.upload-comment-section .bg-white {
+  flex: 1;
+  min-width: 300px; /* Prevent shrinking too much on smaller screens */
+}
+
+/* Uploaded Documents section that spans full width */
+.uploaded-documents {
+  width: 100%;
+  margin-top: 2rem;
+}
+
+/* Optional: Adjust for smaller screen sizes */
+@media (max-width: 768px) {
+  .flex {
+    flex-direction: column;
+  }
+
+  /* Adjust layout for smaller screens for Upload/Comment sections */
+  .upload-comment-section {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
