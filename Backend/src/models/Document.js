@@ -1,13 +1,31 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db/index');
-const User = require('./User'); 
+const User = require('./User');
 
 const Document = sequelize.define('Document', {
+  documentName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   documentType: {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  uploadedStatus: {
+    type: DataTypes.ENUM('Uploaded', 'Not Uploaded'),
+    defaultValue: 'Not Uploaded',
+    allowNull: false,
+  },
+  status: {
+    type: DataTypes.ENUM('Approval Pending', 'Approved', 'Rejected'),
+    defaultValue: 'Approval Pending',
+    allowNull: false,
+  },
   fileName: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  filePath: {
     type: DataTypes.STRING,
     allowNull: false,
   },

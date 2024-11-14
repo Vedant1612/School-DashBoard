@@ -2,6 +2,7 @@ const Document = require('../models/Document');
 const User = require('../models/User');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
 // Set up multer storage configuration without filename change logic
 const storage = multer.diskStorage({
@@ -41,12 +42,11 @@ exports.uploadDocument = async (req, res) => {
       return res.status(400).json({ error: 'File, document type, and document name are required.' });
     }
 
-    const { documentType } = req.body;
+    const { documentType, documentName } = req.body;
     const uploadedBy = req.user ? req.user.id : 'anonymous'; // Fallback to 'anonymous' if user is not authenticated
 
-    // Create a safe document name
+    // Construct safe document name
     const fileExtension = path.extname(req.file.originalname).toLowerCase();
-    const documentName = req.body.documentName ? req.body.documentName : 'demo'; // Fallback to 'demo' if not provided
     const safeDocumentName = documentName.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_-]/g, '');  // Clean document name
     const newFileName = `${uploadedBy}_${safeDocumentName}${fileExtension}`;  // Construct new filename
 
@@ -61,11 +61,15 @@ exports.uploadDocument = async (req, res) => {
         return res.status(500).json({ error: 'Failed to rename the file.' });
       }
 
-      // Create a new document entry in the database with the new file name
+      // Update the document entry with 'Uploaded' status after renaming the file
       const newDocument = await Document.create({
         documentType,
+        documentName: safeDocumentName,  // Add the documentName field
         fileName: newFileName,  // Use the new file name
+        filePath: newPath,  // Set the file path to the new file path
         uploadedBy,
+        uploadedStatus: 'Uploaded',  // Set status to 'Uploaded' after file upload
+        status: 'Approval Pending',  // Set initial status if needed
       });
 
       // Return success response
@@ -76,6 +80,8 @@ exports.uploadDocument = async (req, res) => {
     res.status(500).json({ error: 'Document upload failed' });
   }
 };
+
+
 
 // Controller to fetch all documents
 exports.getDocuments = async (req, res) => {
@@ -89,6 +95,28 @@ exports.getDocuments = async (req, res) => {
     res.status(500).json({ error: 'Failed to retrieve documents' });
   }
 };
+
+exports.downloadDocument = (req, res) => {
+  const { fileName } = req.params;
+  const filePath = path.join(__dirname, '..', 'uploads', fileName);
+
+  console.log('Attempting to download file at:', filePath);
+
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      console.error('File not found:', filePath);
+      return res.status(404).json({ error: 'File not found' });
+    }
+    res.download(filePath, fileName, (downloadErr) => {
+      if (downloadErr) {
+        console.error('Error downloading file:', downloadErr);
+        return res.status(500).json({ error: 'Failed to download the file' });
+      }
+    });
+  });
+};
+
+
 
 // Export the upload middleware for single file upload
 exports.upload = upload.single('file');

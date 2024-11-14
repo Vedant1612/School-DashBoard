@@ -5,15 +5,14 @@ import API_BASE_URL from '../config';
 import { useNavigate } from 'react-router-dom';
 
 function StudentDashboard() {
-  const navigate = useNavigate(); // Ensure useNavigate is initialized correctly
+  const navigate = useNavigate();
   const [documentType, setDocumentType] = useState('');
   const [document, setDocument] = useState(null);
   const [uploadedDocuments, setUploadedDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
-  const [documentName, setDocumentName] = useState(''); // To store the document name (comment)
+  const [documentName, setDocumentName] = useState('');
 
-  // Handle file input change
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file && file.type === 'application/pdf') {
@@ -23,24 +22,21 @@ function StudentDashboard() {
     }
   };
 
-  // Capture the comment (document name) from the textarea
   const handleCommentChange = (e) => {
-    setDocumentName(e.target.value); // Set document name as comment
+    setDocumentName(e.target.value);
   };
 
-  // Upload document to the server
   const handleUpload = async () => {
     if (document && documentType && documentName) {
       const formData = new FormData();
       formData.append('file', document);
       formData.append('documentType', documentType);
-      formData.append('documentName', documentName); // Attach document name (comment)
+      formData.append('documentName', documentName);
 
       setUploading(true);
 
       try {
         const token = localStorage.getItem('token');
-
         const response = await axios.post(`${API_BASE_URL}/student/uploadDocument`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -52,7 +48,7 @@ function StudentDashboard() {
         setUploadedDocuments([...uploadedDocuments, response.data.document]);
         setDocument(null);
         setDocumentType('');
-        setDocumentName(''); 
+        setDocumentName('');
       } catch (error) {
         console.error(error);
         alert('Document upload failed!');
@@ -64,7 +60,6 @@ function StudentDashboard() {
     }
   };
 
-  // Fetch the uploaded documents from the server
   const fetchUploadedDocuments = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -86,9 +81,31 @@ function StudentDashboard() {
     fetchUploadedDocuments();
   }, []);
 
+  const handleDownload = async (fileName) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API_BASE_URL}/student/downloadDocument/${fileName}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: 'blob', // Important to handle binary data
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error('Error downloading document:', error);
+      alert('Failed to download document');
+    }
+  };
+
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
       <div className="w-64 bg-gradient-to-b from-blue-500 to-blue-500 text-white p-6 flex flex-col justify-between">
         <h2 className="text-2xl font-semibold mb-8 text-center">Student Panel</h2>
         <ul className="space-y-4">
@@ -105,7 +122,7 @@ function StudentDashboard() {
           <li>
             <button
               className="w-full text-left py-2 px-4 hover:bg-blue-700 flex items-center"
-              onClick={() => navigate('/student-dashboard/view-documents')} // Correctly using navigate
+              onClick={() => navigate('/student-dashboard/view-documents')}
             >
               <FaDownload className="mr-3" /> View Documents
             </button>
@@ -113,16 +130,12 @@ function StudentDashboard() {
         </ul>
       </div>
 
-      {/* Main Content */}
       <div className="flex-1 p-8 overflow-y-auto">
-        {/* Header */}
         <header className="flex justify-between items-center border-b border-gray-200 pb-4 mb-8">
           <h1 className="text-3xl font-semibold text-gray-800">Student Dashboard</h1>
         </header>
 
-        {/* Content Area */}
         <div className="grid grid-cols-1 gap-8">
-          {/* Upload Document Section */}
           <div className="bg-white p-6 rounded-lg shadow-xl transition transform hover:scale-102 hover:shadow-2xl duration-300 box w-full">
             <h2 className="text-xl font-semibold text-gray-700 mb-4">Upload Document</h2>
 
@@ -161,7 +174,6 @@ function StudentDashboard() {
             </button>
           </div>
 
-          {/* Uploaded Documents Section */}
           <div className="bg-white p-6 rounded-lg shadow-xl transition transform hover:scale-102 hover:shadow-2xl duration-300 box w-full">
             <h2 className="text-xl font-semibold text-gray-700 mb-4">Uploaded Documents</h2>
             {loading ? (
@@ -175,9 +187,10 @@ function StudentDashboard() {
                     <li key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-md">
                       <span className="text-gray-700">{doc.fileName}</span>
                       <button
+                        onClick={() => handleDownload(doc.fileName)}
                         className="bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-500 focus:outline-none transition duration-300"
                       >
-                        <a href={`${API_BASE_URL}/uploads/${doc.fileName}`} download>Download</a>
+                        Download
                       </button>
                     </li>
                   ))
