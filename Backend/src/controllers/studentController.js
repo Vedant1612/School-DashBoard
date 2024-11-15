@@ -1,5 +1,5 @@
 const Document = require('../models/Document');
-const User = require('../models/User'); // Import the User model
+const User = require('../models/User'); 
 const multer = require('multer');
 
 // Configure multer to store files in memory as buffers
@@ -8,7 +8,7 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 10 * 1024 * 1024 },  // Limit file size to 10MB
   fileFilter: (req, file, cb) => {
-    const allowedFileTypes = /pdf$/; // Allow only .pdf files
+    const allowedFileTypes = /pdf$/; 
     const extname = allowedFileTypes.test(file.originalname.toLowerCase());
     const mimetype = allowedFileTypes.test(file.mimetype);
 
@@ -31,15 +31,15 @@ exports.uploadDocument = async (req, res) => {
     const { documentType, documentName } = req.body;
     const uploadedBy = req.user ? req.user.id : 'anonymous';
 
-    // Generate a unique file name by using the selected document name and adding a timestamp or unique identifier
-    const uniqueFileName = `${documentType}.pdf`; // You can append any unique identifier here if needed
+    // Generate a unique file name by using the selected document name 
+    const uniqueFileName = `${documentType}.pdf`; 
 
     // Create document in the database with file data
     const newDocument = await Document.create({
       documentType,
       documentName,
-      fileName: uniqueFileName,  // Save with the new file name
-      fileData: req.file.buffer,  // Store the file data as a buffer
+      fileName: uniqueFileName,  
+      fileData: req.file.buffer,  
       uploadedBy,
       uploadedStatus: 'Uploaded',
       status: 'Approval Pending',
@@ -62,10 +62,10 @@ exports.getDocuments = async (req, res) => {
     });
     res.json(documents);
   } catch (error) {
-    console.error('Error fetching documents:', error); // Detailed error logging
+    console.error('Error fetching documents:', error);
     res.status(500).json({
       error: 'Failed to retrieve documents',
-      message: error.message, // Include error message for more context
+      message: error.message, 
     });
   }
 };
@@ -84,9 +84,9 @@ exports.downloadDocument = async (req, res) => {
 
     // Set headers and send the file data
     res.setHeader('Content-Disposition', `attachment; filename="${document.fileName}"`);
-    res.setHeader('Content-Type', 'application/pdf');  // Assuming all files are PDFs
+    res.setHeader('Content-Type', 'application/pdf');  
 
-    res.send(document.fileData);  // Send the binary file data directly
+    res.send(document.fileData);  
   } catch (error) {
     console.error('Error downloading document:', error);
     res.status(500).json({ error: 'Failed to download the document' });
@@ -120,9 +120,9 @@ exports.viewDocument = async (req, res) => {
       return res.status(404).json({ error: 'File not found' });
     }
 
-    // Send the file data as response to be viewed (e.g., a PDF document)
+
     res.contentType('application/pdf');
-    res.send(document.fileData); // Assuming the document is stored in the fileData field as binary
+    res.send(document.fileData); 
   } catch (error) {
     console.error('Error viewing document:', error);
     res.status(500).json({ error: 'Failed to view the document' });

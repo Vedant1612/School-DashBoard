@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import API_BASE_URL from '../config'; // Assuming this is where your API base URL is configured
+import API_BASE_URL from '../config'; 
 import { FaUser, FaEnvelope, FaPhoneAlt } from 'react-icons/fa';
-import Sidebar from '../components/Sidebar'; // Import Sidebar component
+import Sidebar from '../components/Sidebar'; 
 
 function Profile() {
   const [userData, setUserData] = useState(null);

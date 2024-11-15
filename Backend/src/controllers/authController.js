@@ -9,7 +9,7 @@ exports.signup = async (req, res) => {
     const { name, email, mobile, password } = req.body; 
 
     // Check if the user already exists
-    const existingUser = await User.findOne({ where: { email } }); // Using email for uniqueness
+    const existingUser = await User.findOne({ where: { email } }); 
     if (existingUser) {
       return res.status(400).json({ error: 'Email already exists' });
     }
@@ -30,12 +30,12 @@ exports.signup = async (req, res) => {
 // Login Controller
 exports.login = async (req, res) => {
   try {
-    const { username, password } = req.body; // username is either mobile or student name
+    const { username, password } = req.body; 
 
     // Find the user by mobile or name
     const user = await User.findOne({
       where: {
-        [Op.or]: [{ mobile: username }, { name: username }] // Use OR condition for mobile or name
+        [Op.or]: [{ mobile: username }, { name: username }] 
       }
     });
 

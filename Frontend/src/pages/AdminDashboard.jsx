@@ -12,10 +12,10 @@ function AdminDashboard() {
   const [documents, setDocuments] = useState([]);
 
   // Dummy student data for testing
-  const sampleStudents = [
-    { name: "Student 1", documents: ["Document 1", "Document 2"] },
-    { name: "Student 2", documents: ["Document 3", "Document 4"] }
-  ];
+  // const sampleStudents = [
+  //   { name: "Student 1", documents: ["Document 1", "Document 2"] },
+  //   { name: "Student 2", documents: ["Document 3", "Document 4"] }
+  // ];
 
   const handleRegister = () => {
     const newStudent = {
@@ -24,7 +24,7 @@ function AdminDashboard() {
       address,
       fatherName,
       motherName,
-      documents: [] // Initially no documents uploaded
+      documents: [] 
     };
     setStudents([...students, newStudent]);
     resetForm();

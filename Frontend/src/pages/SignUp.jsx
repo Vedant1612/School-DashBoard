@@ -12,7 +12,7 @@ function SignUp() {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const navigate = useNavigate();  // Hook for navigation
+  const navigate = useNavigate(); 
 
   const handleSignUp = async () => {
     setError('');
@@ -35,7 +35,7 @@ function SignUp() {
         // Navigate to the login page after successful sign-up
         setTimeout(() => {
           navigate('/');
-        }, 1000); // Redirect after a brief delay (2 seconds) to let the success message show
+        }, 1000); 
       } else {
         setError(data.error || 'Sign-up failed');
       }

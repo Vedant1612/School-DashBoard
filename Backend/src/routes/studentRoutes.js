@@ -12,8 +12,8 @@ const { authenticate } = require('../middleware/authMiddleware');
 const router = express.Router();
 
 // Protected routes that require authentication
-router.post('/uploadDocument', authenticate, upload, uploadDocument);  // Upload document route
-router.get('/getDocuments', authenticate, getDocuments);  // Get all documents route
+router.post('/uploadDocument', authenticate, upload, uploadDocument);  
+router.get('/getDocuments', authenticate, getDocuments);  
 router.get('/downloadDocument/:fileName', authenticate, downloadDocument);
 router.get('/profile', authenticate, getProfile);
 router.get('/viewDocument/:fileName', viewDocument);

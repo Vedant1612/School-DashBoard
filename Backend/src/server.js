@@ -10,7 +10,7 @@ require('dotenv').config();
 // Initialize Express app
 const app = express();
 
-// Ensure the uploads directory exists
+
 const uploadDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir);  
@@ -18,7 +18,7 @@ if (!fs.existsSync(uploadDir)) {
 
 // CORS configuration to allow requests from frontend
 app.use(cors({
-  origin: 'http://localhost:5173', // Update as needed
+  origin: 'http://localhost:5173', 
 }));
 
 // Middleware to parse incoming JSON and URL-encoded data
@@ -33,7 +33,7 @@ sequelize.sync()
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/student', studentRoutes);  // Keep student-related routes in studentRoutes
+app.use('/api/student', studentRoutes);  
 
 // Start server
 const PORT = process.env.PORT || 5000;

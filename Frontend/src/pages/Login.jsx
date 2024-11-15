@@ -5,11 +5,11 @@ import API_BASE_URL from '../config';
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');  // State to hold error message
+  const [error, setError] = useState(''); 
   const navigate = useNavigate(); 
 
   const handleLogin = async () => {
-    setError(''); // Reset the error message on each attempt
+    setError(''); 
 
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {

@@ -4,13 +4,13 @@ const User = require('../models/User');
 // Controller to fetch all documents for the logged-in user
 exports.getDocuments = async (req, res) => {
   try {
-    const userId = req.user.id; // Get user ID from the authenticated user
+    const userId = req.user.id; 
 
     // Fetch documents based on the user ID
     const documents = await Document.findAll({
       where: { uploadedBy: userId },
       include: [
-        { model: User, attributes: ['name'] },  // Include uploader's name from User model
+        { model: User, attributes: ['name'] }, 
       ],
     });
 
@@ -24,7 +24,7 @@ exports.getDocuments = async (req, res) => {
       uploadedStatus: doc.uploadedStatus,
       status: doc.status,
       fileName: doc.fileName,
-      uploadedBy: doc.User.name,  // Getting the uploader's name
+      uploadedBy: doc.User.name,  
     })));
   } catch (error) {
     console.error('Error fetching documents:', error);

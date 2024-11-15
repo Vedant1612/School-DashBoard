@@ -67,9 +67,9 @@
 
 /* Ensure the textarea is resizable and has proper styling */
 textarea {
-  resize: vertical; /* Allows vertical resizing */
-  overflow: auto; /* Prevent overflow */
-  min-height: 120px; /* Start with a minimum height */
+  resize: vertical; 
+  overflow: auto; 
+  min-height: 120px; 
   height: auto;
   padding: 0.75rem;
   border: 1px solid #ccc;
@@ -116,13 +116,13 @@ textarea {
 
 @media (min-width: 768px) {
   .grid-cols-2 {
-    grid-template-columns: repeat(2, 1fr); /* Two columns on medium screens */
+    grid-template-columns: repeat(2, 1fr); 
   }
 }
 
 @media (min-width: 1024px) {
   .grid-cols-3 {
-    grid-template-columns: repeat(3, 1fr); /* Three columns on larger screens */
+    grid-template-columns: repeat(3, 1fr); 
   }
 }
 
@@ -135,7 +135,7 @@ textarea {
 
 .upload-comment-section .bg-white {
   flex: 1;
-  min-width: 300px; /* Prevent shrinking too much on smaller screens */
+  min-width: 300px; 
 }
 
 /* Uploaded Documents section that spans full width */

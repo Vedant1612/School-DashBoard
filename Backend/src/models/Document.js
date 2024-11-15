@@ -1,4 +1,3 @@
-// models/Document.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db/index');
 const User = require('./User');
@@ -27,7 +26,7 @@ const Document = sequelize.define('Document', {
     allowNull: false,
   },
   fileData: {
-    type: DataTypes.BLOB('long'),  // Store the file content as a blob
+    type: DataTypes.BLOB('long'), 
     allowNull: false,
   },
   uploadedBy: {

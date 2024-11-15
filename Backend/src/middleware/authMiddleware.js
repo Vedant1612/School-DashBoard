@@ -1,9 +1,9 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User'); // Import the User model
+const User = require('../models/User'); 
 
 // Middleware to authenticate the user
 exports.authenticate = async (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1]; // Extract token from Authorization header
+  const token = req.headers.authorization?.split(' ')[1]; 
   if (!token) {
     return res.status(401).json({ message: 'Access Denied' });
   }
@@ -21,7 +21,7 @@ exports.authenticate = async (req, res, next) => {
 
     // Attach the user object to the request to be used in subsequent middleware
     req.user = user;
-    next(); // Proceed to the next middleware or route handler
+    next(); 
   } catch (error) {
     console.error('Authentication error:', error);
     res.status(401).json({ message: 'Invalid or Expired Token' });

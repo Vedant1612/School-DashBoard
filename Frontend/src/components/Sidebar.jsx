@@ -19,7 +19,7 @@ function Sidebar() {
   };
 
   if (!isAuthenticated) {
-    return null; // If not authenticated, don't render the sidebar
+    return null; 
   }
 
   return (
@@ -30,7 +30,7 @@ function Sidebar() {
         <li>
           <button
             className="w-full text-left py-2 px-4 hover:bg-blue-700 flex items-center"
-            onClick={() => navigate('/student-dashboard/profile')}  // Navigate to Profile page
+            onClick={() => navigate('/student-dashboard/profile')}  
           >
             <FaUserCircle className="mr-3 text-xl" />  {/* Profile Icon */}
             <span>Profile</span>

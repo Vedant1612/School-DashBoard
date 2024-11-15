@@ -18,7 +18,7 @@ function ViewDocuments() {
           Authorization: `Bearer ${token}`,
         },
       });
-      setUploadedDocuments(response.data); // Assuming response contains the necessary data
+      setUploadedDocuments(response.data); 
     } catch (error) {
       console.error(error);
       alert('Failed to fetch documents!');

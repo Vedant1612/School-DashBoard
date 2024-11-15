@@ -3,7 +3,7 @@ import { FaFileUpload, FaFolderOpen, FaDownload } from 'react-icons/fa';
 import axios from 'axios';
 import API_BASE_URL from '../config';
 import { useNavigate } from 'react-router-dom';
-import Sidebar from '../components/Sidebar'; // Import Sidebar component
+import Sidebar from '../components/Sidebar';
 
 function StudentDashboard() {
   const navigate = useNavigate();
@@ -95,17 +95,17 @@ function StudentDashboard() {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        responseType: 'blob', // Ensuring binary data (blob) is returned
+        responseType: 'blob', 
       });
 
-      const url = window.URL.createObjectURL(new Blob([response.data])); // Create a blob URL
+      const url = window.URL.createObjectURL(new Blob([response.data])); 
 
       // Ensure document and body are accessible
       setTimeout(() => {
         if (window.document && window.document.body) {
           const link = window.document.createElement('a');
           link.href = url;
-          link.setAttribute('download', fileName); // Setting the download file name
+          link.setAttribute('download', fileName); 
           window.document.body.appendChild(link);
           link.click();
           link.remove();
@@ -115,7 +115,7 @@ function StudentDashboard() {
         } else {
           throw new Error('Document element creation failed.');
         }
-      }, 100); // Slight delay before accessing the DOM
+      }, 100); 
     } catch (error) {
       console.error('Error downloading document:', error);
       alert('Failed to download document. Please try again.');
@@ -130,7 +130,7 @@ function StudentDashboard() {
       {/* Main Content */}
       <div className="flex-1 p-8 overflow-y-auto">
         <header className="flex justify-between items-center border-b border-gray-200 pb-4 mb-8">
-          <h1 className="text-3xl font-semibold text-gray-800">Student Dashboard</h1>
+          <h1 className="text-3xl font-semibold text-gray-800">Upload Document</h1>
         </header>
 
         <div className="grid grid-cols-1 gap-8">
