@@ -6,6 +6,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import SignUp from './pages/SignUp';
 import ViewDocuments from './pages/ViewDocuments';
 import PrivateRoute from './components/PrivateRoute'; // Import the PrivateRoute component
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -14,11 +15,24 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
 
-        {/* Protected routes wrapped in PrivateRoute */}
-        <Route path="/student-dashboard" element={<PrivateRoute element={<StudentDashboard />} />} />
-        <Route path="/student-dashboard/view-documents" element={<PrivateRoute element={<ViewDocuments />} />} />
+        {/* Protected routes using PrivateRoute */}
+        <Route 
+          path="/student-dashboard" 
+          element={<PrivateRoute><StudentDashboard /></PrivateRoute>} 
+        />
+        <Route 
+          path="/student-dashboard/profile" 
+          element={<PrivateRoute><Profile /></PrivateRoute>} 
+        />
+        <Route 
+          path="/student-dashboard/view-documents" 
+          element={<PrivateRoute><ViewDocuments /></PrivateRoute>} 
+        />
 
-        <Route path="/admin-dashboard" element={<PrivateRoute element={<AdminDashboard />} />} />
+        <Route 
+          path="/admin-dashboard" 
+          element={<PrivateRoute><AdminDashboard /></PrivateRoute>} 
+        />
       </Routes>
     </Router>
   );

@@ -23,6 +23,7 @@ const upload = multer({
 // Controller to handle document upload
 exports.uploadDocument = async (req, res) => {
   try {
+    // Check if file and other required fields are present
     if (!req.file || !req.body.documentType || !req.body.documentName) {
       return res.status(400).json({ error: 'File, document type, and document name are required.' });
     }
@@ -30,11 +31,14 @@ exports.uploadDocument = async (req, res) => {
     const { documentType, documentName } = req.body;
     const uploadedBy = req.user ? req.user.id : 'anonymous';
 
+    // Generate a unique file name by using the selected document name and adding a timestamp or unique identifier
+    const uniqueFileName = `${documentType}.pdf`; // You can append any unique identifier here if needed
+
     // Create document in the database with file data
     const newDocument = await Document.create({
       documentType,
       documentName,
-      fileName: req.file.originalname,
+      fileName: uniqueFileName,  // Save with the new file name
       fileData: req.file.buffer,  // Store the file data as a buffer
       uploadedBy,
       uploadedStatus: 'Uploaded',
@@ -47,6 +51,7 @@ exports.uploadDocument = async (req, res) => {
     res.status(500).json({ error: 'Document upload failed' });
   }
 };
+
 
 // Controller to fetch all documents
 exports.getDocuments = async (req, res) => {
@@ -85,6 +90,62 @@ exports.downloadDocument = async (req, res) => {
   } catch (error) {
     console.error('Error downloading document:', error);
     res.status(500).json({ error: 'Failed to download the document' });
+  }
+};
+
+// Controller to fetch profile data
+exports.getProfile = async (req, res) => {
+  try {
+    const user = req.user; 
+    res.json({
+      name: user.name,
+      email: user.email,
+      mobile: user.mobile
+    });
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    res.status(500).json({ message: 'Failed to retrieve profile' });
+  }
+};
+
+// Controller to view a document
+exports.viewDocument = async (req, res) => {
+  try {
+    const { fileName } = req.params;
+
+    // Retrieve the document by file name
+    const document = await Document.findOne({ where: { fileName } });
+
+    if (!document) {
+      return res.status(404).json({ error: 'File not found' });
+    }
+
+    // Send the file data as response to be viewed (e.g., a PDF document)
+    res.contentType('application/pdf');
+    res.send(document.fileData); // Assuming the document is stored in the fileData field as binary
+  } catch (error) {
+    console.error('Error viewing document:', error);
+    res.status(500).json({ error: 'Failed to view the document' });
+  }
+};
+
+// Controller to delete a document
+exports.deleteDocument = async (req, res) => {
+  try {
+    const { fileName } = req.params;
+
+    const document = await Document.findOne({ where: { fileName } });
+
+    if (!document) {
+      return res.status(404).json({ error: 'Document not found' });
+    }
+
+    // Delete the document
+    await document.destroy();
+    res.json({ message: 'Document deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting document:', error);
+    res.status(500).json({ error: 'Failed to delete the document' });
   }
 };
 

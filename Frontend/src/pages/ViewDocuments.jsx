@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaDownload, FaEdit } from 'react-icons/fa';
+import { FaDownload, FaEye, FaTrash } from 'react-icons/fa';
 import Sidebar from '../components/Sidebar';
 import { useNavigate } from 'react-router-dom';
 import API_BASE_URL from '../config';
@@ -55,9 +55,28 @@ function ViewDocuments() {
     }
   };
 
-  const handleUpdate = (fileName) => {
-    // Handle document update logic here (redirect to update page or modal)
-    alert(`Update logic for ${fileName} goes here!`);
+  const handleView = (fileName) => {
+    // Construct the URL for the document's viewing endpoint
+    const url = `${API_BASE_URL}/student/viewDocument/${fileName}`;
+    // Open the document in a new tab
+    window.open(url, '_blank');
+  };
+
+  const handleDelete = async (fileName) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`${API_BASE_URL}/student/deleteDocument/${fileName}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      // After deleting, refetch documents to update the list
+      fetchUploadedDocuments();
+      alert('Document deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting document:', error);
+      alert('Failed to delete document. Please try again.');
+    }
   };
 
   return (
@@ -96,21 +115,28 @@ function ViewDocuments() {
                         <span className="text-green-500">Uploaded</span>
                       </td>
                       <td className="px-4 py-2">
-                        <span className="text-yellow-500">Pending</span>
+                        <span className="text-yellow-500">{doc.status}</span>
                       </td>
                       <td className="px-4 py-2">
                         <button
                           onClick={() => handleDownload(doc.fileName)}
-                          className="bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-500 focus:outline-none transition duration-300 mr-2"
+                          className="text-blue-500 hover:text-blue-700 mr-2"
                         >
-                          <FaDownload className="mr-2" /> Download
+                          <FaDownload />
                         </button>
-                        {doc.status === 'pending' && (
+                        <button
+                          onClick={() => handleView(doc.fileName)}
+                          className="text-green-500 hover:text-green-700 mr-2"
+                        >
+                          <FaEye />
+                        </button>
+                        {/* Only show the delete button if the status is not 'approved' */}
+                        {doc.status !== 'Approved' && (
                           <button
-                            onClick={() => handleUpdate(doc.fileName)}
-                            className="bg-yellow-400 text-white px-4 py-2 rounded-md hover:bg-yellow-500 focus:outline-none transition duration-300"
+                            onClick={() => handleDelete(doc.fileName)}
+                            className="text-red-500 hover:text-red-700"
                           >
-                            <FaEdit className="mr-2" /> Update
+                            <FaTrash />
                           </button>
                         )}
                       </td>
