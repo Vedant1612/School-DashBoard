@@ -3,6 +3,7 @@ import { FaFileUpload, FaFolderOpen, FaDownload } from 'react-icons/fa';
 import axios from 'axios';
 import API_BASE_URL from '../config';
 import { useNavigate } from 'react-router-dom';
+import Sidebar from '../components/Sidebar'; // Import Sidebar component
 
 function StudentDashboard() {
   const navigate = useNavigate();
@@ -84,52 +85,49 @@ function StudentDashboard() {
   const handleDownload = async (fileName) => {
     try {
       const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found');
+        alert('Authentication token missing or expired');
+        return;
+      }
+
       const response = await axios.get(`${API_BASE_URL}/student/downloadDocument/${fileName}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        responseType: 'blob', // Important to handle binary data
+        responseType: 'blob', // Ensuring binary data (blob) is returned
       });
 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', fileName);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      const url = window.URL.createObjectURL(new Blob([response.data])); // Create a blob URL
+
+      // Ensure document and body are accessible
+      setTimeout(() => {
+        if (window.document && window.document.body) {
+          const link = window.document.createElement('a');
+          link.href = url;
+          link.setAttribute('download', fileName); // Setting the download file name
+          window.document.body.appendChild(link);
+          link.click();
+          link.remove();
+
+          // Optionally, revoke the object URL after download
+          window.URL.revokeObjectURL(url);
+        } else {
+          throw new Error('Document element creation failed.');
+        }
+      }, 100); // Slight delay before accessing the DOM
     } catch (error) {
       console.error('Error downloading document:', error);
-      alert('Failed to download document');
+      alert('Failed to download document. Please try again.');
     }
   };
 
   return (
     <div className="flex h-screen bg-gray-100">
-      <div className="w-64 bg-gradient-to-b from-blue-500 to-blue-500 text-white p-6 flex flex-col justify-between">
-        <h2 className="text-2xl font-semibold mb-8 text-center">Student Panel</h2>
-        <ul className="space-y-4">
-          <li>
-            <button className="w-full text-left py-2 px-4 hover:bg-blue-700 flex items-center">
-              <FaFolderOpen className="mr-3" /> Dashboard
-            </button>
-          </li>
-          <li>
-            <button className="w-full text-left py-2 px-4 hover:bg-blue-700 flex items-center">
-              <FaFileUpload className="mr-3" /> Upload Document
-            </button>
-          </li>
-          <li>
-            <button
-              className="w-full text-left py-2 px-4 hover:bg-blue-700 flex items-center"
-              onClick={() => navigate('/student-dashboard/view-documents')}
-            >
-              <FaDownload className="mr-3" /> View Documents
-            </button>
-          </li>
-        </ul>
-      </div>
+      {/* Sidebar */}
+      <Sidebar />
 
+      {/* Main Content */}
       <div className="flex-1 p-8 overflow-y-auto">
         <header className="flex justify-between items-center border-b border-gray-200 pb-4 mb-8">
           <h1 className="text-3xl font-semibold text-gray-800">Student Dashboard</h1>

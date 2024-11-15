@@ -95,7 +95,7 @@ function SignUp() {
         <div className="mt-6 text-center">
           <small className="text-sm text-gray-600">
             Already have an account?{' '}
-            <a href="/login" className="text-indigo-600 hover:underline">Log in</a>
+            <a href="/" className="text-indigo-600 hover:underline">Log in</a>
           </small>
         </div>
       </div>

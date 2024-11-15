@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FaDownload, FaEdit } from 'react-icons/fa';
+import Sidebar from '../components/Sidebar';
+import { useNavigate } from 'react-router-dom';
 import API_BASE_URL from '../config';
 
 function ViewDocuments() {
-  const [documents, setDocuments] = useState([]);
+  const [uploadedDocuments, setUploadedDocuments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  // Fetch documents from the server
-  const fetchDocuments = async () => {
+  const fetchUploadedDocuments = async () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.get(`${API_BASE_URL}/student/getDocuments`, {
@@ -15,9 +18,9 @@ function ViewDocuments() {
           Authorization: `Bearer ${token}`,
         },
       });
-      setDocuments(response.data); // Store the documents in the state
+      setUploadedDocuments(response.data); // Assuming response contains the necessary data
     } catch (error) {
-      console.error('Error fetching documents:', error);
+      console.error(error);
       alert('Failed to fetch documents!');
     } finally {
       setLoading(false);
@@ -25,86 +28,100 @@ function ViewDocuments() {
   };
 
   useEffect(() => {
-    fetchDocuments(); // Fetch the documents on page load
+    fetchUploadedDocuments();
   }, []);
 
-  const handleUpdate = (docName) => {
-    alert(`Update action triggered for ${docName}`);
-    // Implement the update logic here (e.g., open a modal or navigate to update page)
+  const handleDownload = async (fileName) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API_BASE_URL}/student/downloadDocument/${fileName}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        responseType: 'blob',
+      });
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = window.document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', fileName);
+      window.document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error downloading document:', error);
+      alert('Failed to download document. Please try again.');
+    }
+  };
+
+  const handleUpdate = (fileName) => {
+    // Handle document update logic here (redirect to update page or modal)
+    alert(`Update logic for ${fileName} goes here!`);
   };
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
-      <h1 className="text-4xl font-semibold text-gray-800 mb-8 text-center">Uploaded Documents</h1>
+    <div className="flex h-screen bg-gray-100">
+      {/* Sidebar */}
+      <Sidebar />
 
-      {loading ? (
-        <div className="text-center text-xl text-gray-600">Loading...</div>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full table-auto border-collapse border border-gray-200 bg-white shadow-md rounded-lg">
-            <thead className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
-              <tr>
-                <th className="px-6 py-3 border-b text-left">Document Name</th>
-                <th className="px-6 py-3 border-b text-left">Uploaded Status</th>
-                <th className="px-6 py-3 border-b text-left">Status</th>
-                <th className="px-6 py-3 border-b text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {documents.length === 0 ? (
+      <div className="flex-1 p-8 overflow-y-auto">
+        <header className="flex justify-between items-center border-b border-gray-200 pb-4 mb-8">
+          <h1 className="text-3xl font-semibold text-gray-800">Uploaded Documents</h1>
+        </header>
+
+        <div className="bg-white p-6 rounded-lg shadow-xl transition transform hover:scale-102 hover:shadow-2xl duration-300 box w-full">
+          {loading ? (
+            <div>Loading...</div>
+          ) : (
+            <table className="min-w-full table-auto">
+              <thead>
                 <tr>
-                  <td colSpan="4" className="text-center py-6 text-gray-500">No documents uploaded yet.</td>
+                  <th className="px-4 py-2 text-left">Document Name</th>
+                  <th className="px-4 py-2 text-left">Uploaded Status</th>
+                  <th className="px-4 py-2 text-left">Status</th>
+                  <th className="px-4 py-2 text-left">Action</th>
                 </tr>
-              ) : (
-                documents.map((doc, index) => (
-                  <tr key={index} className="odd:bg-gray-50 hover:bg-gray-100 transition duration-300">
-                    <td className="px-6 py-4 border-b text-gray-800">{doc.documentName}</td>
-                    <td className="px-6 py-4 border-b">
-                      <span
-                        className={`px-4 py-2 rounded-full text-white text-sm ${
-                          doc.uploadedStatus === 'Uploaded'
-                            ? 'bg-green-400'
-                            : 'bg-yellow-400'
-                        }`}
-                      >
-                        {doc.uploadedStatus}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 border-b">
-                      <span
-                        className={`px-4 py-2 rounded-full text-white text-sm ${
-                          doc.status === 'Approval Pending'
-                            ? 'bg-yellow-500'
-                            : doc.status === 'Approved'
-                            ? 'bg-green-500'
-                            : 'bg-red-500'
-                        }`}
-                      >
-                        {doc.status}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 border-b flex items-center space-x-4">
-                      <a
-                        href={`${API_BASE_URL}/uploads/${doc.documentName}`}
-                        download
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-all"
-                      >
-                        Download
-                      </a>
-                      <button
-                        onClick={() => handleUpdate(doc.documentName)}
-                        className="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition-all"
-                      >
-                        Update
-                      </button>
-                    </td>
+              </thead>
+              <tbody>
+                {uploadedDocuments.length === 0 ? (
+                  <tr>
+                    <td colSpan="4" className="text-center py-4">No documents uploaded yet.</td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  uploadedDocuments.map((doc, index) => (
+                    <tr key={index} className="border-t">
+                      <td className="px-4 py-2">{doc.fileName}</td>
+                      <td className="px-4 py-2">
+                        <span className="text-green-500">Uploaded</span>
+                      </td>
+                      <td className="px-4 py-2">
+                        <span className="text-yellow-500">Pending</span>
+                      </td>
+                      <td className="px-4 py-2">
+                        <button
+                          onClick={() => handleDownload(doc.fileName)}
+                          className="bg-blue-400 text-white px-4 py-2 rounded-md hover:bg-blue-500 focus:outline-none transition duration-300 mr-2"
+                        >
+                          <FaDownload className="mr-2" /> Download
+                        </button>
+                        {doc.status === 'pending' && (
+                          <button
+                            onClick={() => handleUpdate(doc.fileName)}
+                            className="bg-yellow-400 text-white px-4 py-2 rounded-md hover:bg-yellow-500 focus:outline-none transition duration-300"
+                          >
+                            <FaEdit className="mr-2" /> Update
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
