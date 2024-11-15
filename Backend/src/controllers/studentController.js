@@ -56,16 +56,25 @@ exports.uploadDocument = async (req, res) => {
 // Controller to fetch all documents
 exports.getDocuments = async (req, res) => {
   try {
-    // Attempt to fetch documents with associated user data
+    // Extract user ID from the authenticated token
+    const userId = req.user.id;
+
+    // Fetch documents uploaded by the specific user
     const documents = await Document.findAll({
-      include: [{ model: User, attributes: ['name'] }],
+      where: { uploadedBy: userId }, 
+      include: [{ 
+        model: User, 
+        attributes: ['name'], 
+      }],
     });
+
+    // Return the documents in the response
     res.json(documents);
   } catch (error) {
     console.error('Error fetching documents:', error);
     res.status(500).json({
       error: 'Failed to retrieve documents',
-      message: error.message, 
+      message: error.message,
     });
   }
 };
