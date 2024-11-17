@@ -5,8 +5,9 @@ import StudentDashboard from './pages/StudentDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import SignUp from './pages/SignUp';
 import ViewDocuments from './pages/ViewDocuments';
-import PrivateRoute from './components/PrivateRoute'; // Import the PrivateRoute component
+import PrivateRoute from './components/PrivateRoute'; 
 import Profile from './pages/Profile';
+import EditProfile from './pages/EditProfile'; 
 
 function App() {
   return (
@@ -27,6 +28,12 @@ function App() {
         <Route 
           path="/student-dashboard/view-documents" 
           element={<PrivateRoute><ViewDocuments /></PrivateRoute>} 
+        />
+
+        {/* Add Edit Profile Route */}
+        <Route 
+          path="/student-dashboard/edit-profile" 
+          element={<PrivateRoute><EditProfile /></PrivateRoute>} 
         />
 
         <Route 

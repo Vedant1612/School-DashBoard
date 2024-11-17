@@ -24,7 +24,7 @@ exports.getDocuments = async (req, res) => {
       uploadedStatus: doc.uploadedStatus,
       status: doc.status,
       fileName: doc.fileName,
-      uploadedBy: doc.User.name,  
+      uploadedBy: doc.User.username,  
     })));
   } catch (error) {
     console.error('Error fetching documents:', error);

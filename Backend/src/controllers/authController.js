@@ -1,15 +1,15 @@
-const { Op } = require('sequelize'); 
+const { Op } = require('sequelize');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('../models/User'); 
+const User = require('../models/User');
 
 // Signup Controller
 exports.signup = async (req, res) => {
   try {
-    const { name, email, mobile, password } = req.body; 
+    const { username, firstName, lastName, email, mobile, password } = req.body;
 
-    // Check if the user already exists
-    const existingUser = await User.findOne({ where: { email } }); 
+    // Check if the user already exists (check for email)
+    const existingUser = await User.findOne({ where: { email } });
     if (existingUser) {
       return res.status(400).json({ error: 'Email already exists' });
     }
@@ -17,8 +17,15 @@ exports.signup = async (req, res) => {
     // Hash password before saving
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user in the database
-    const newUser = await User.create({ name, email, mobile, password: hashedPassword });
+    // Create a new user in the database with the new fields
+    const newUser = await User.create({ 
+      username,
+      firstName,
+      lastName,
+      email,
+      mobile,
+      password: hashedPassword
+    });
 
     res.status(201).json({ message: 'User created successfully', user: newUser });
   } catch (error) {
@@ -30,12 +37,12 @@ exports.signup = async (req, res) => {
 // Login Controller
 exports.login = async (req, res) => {
   try {
-    const { username, password } = req.body; 
+    const { username, password } = req.body;
 
-    // Find the user by mobile or name
+    // Find the user by username, mobile, or email
     const user = await User.findOne({
       where: {
-        [Op.or]: [{ mobile: username }, { name: username }] 
+        [Op.or]: [{ username }, { mobile: username }, { email: username }]
       }
     });
 
@@ -59,4 +66,3 @@ exports.login = async (req, res) => {
     res.status(500).json({ error: 'User login failed' });
   }
 };
-

@@ -5,37 +5,46 @@ import { useNavigate } from 'react-router-dom';
 const API_BASE_URL = 'http://localhost:5000';
 
 function SignUp() {
-  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [mobile, setMobile] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleSignUp = async () => {
     setError('');
     setSuccess('');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/auth/signup`, { 
+      const response = await fetch(`${API_BASE_URL}/api/auth/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, email, mobile, password }),
+        body: JSON.stringify({
+          username,
+          firstName,
+          lastName,
+          email,
+          mobile,
+          password,
+        }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
         setSuccess('Sign-up successful! Please log in.');
-        
+
         // Navigate to the login page after successful sign-up
         setTimeout(() => {
           navigate('/');
-        }, 1000); 
+        }, 1000);
       } else {
         setError(data.error || 'Sign-up failed');
       }
@@ -60,10 +69,24 @@ function SignUp() {
           {success && <div className="text-green-600 text-center">{success}</div>}
 
           <div>
-            <label htmlFor="name" className="block text-sm font-semibold text-gray-700">Name</label>
-            <input type="text" id="name" value={name} onChange={(e) => setName(e.target.value)}
+            <label htmlFor="username" className="block text-sm font-semibold text-gray-700">Username</label>
+            <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)}
               className="w-full p-4 bg-gray-100 rounded-lg border-2 border-gray-300 focus:ring-4 focus:ring-indigo-500"
-              placeholder="Enter your name" />
+              placeholder="Enter your username" />
+          </div>
+
+          <div>
+            <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700">First Name</label>
+            <input type="text" id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)}
+              className="w-full p-4 bg-gray-100 rounded-lg border-2 border-gray-300 focus:ring-4 focus:ring-indigo-500"
+              placeholder="Enter your first name" />
+          </div>
+
+          <div>
+            <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700">Last Name</label>
+            <input type="text" id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)}
+              className="w-full p-4 bg-gray-100 rounded-lg border-2 border-gray-300 focus:ring-4 focus:ring-indigo-500"
+              placeholder="Enter your last name" />
           </div>
 
           <div>
