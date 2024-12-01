@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const studentRoutes = require('./routes/studentRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 const sequelize = require('./db/index');
 const path = require('path');
 const fs = require('fs');
@@ -28,6 +29,7 @@ sequelize.sync()
 
 app.use('/api/auth', authRoutes);
 app.use('/api/student', studentRoutes);  
+app.use('/api/admin', adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

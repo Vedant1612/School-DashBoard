@@ -1,11 +1,16 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 
-const PrivateRoute = ({ children }) => {
-  const isAuthenticated = !!localStorage.getItem('token'); 
+const PrivateRoute = ({ children, allowedRoles }) => {
+  const token = localStorage.getItem('token');
+  const role = localStorage.getItem('role');
 
-  // Return the children component if authenticated, otherwise redirect to login
-  return isAuthenticated ? children : <Navigate to="/" />;
+  // If not authenticated or role doesn't match, redirect to login
+  if (!token || !allowedRoles.includes(role)) {
+    return <Navigate to="/" />;
+  }
+
+  return children;
 };
 
 export default PrivateRoute;

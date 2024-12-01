@@ -5,6 +5,7 @@ import API_BASE_URL from '../config';
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('student'); // Default role
   const [error, setError] = useState(''); 
   const navigate = useNavigate(); 
 
@@ -12,25 +13,35 @@ function Login() {
     setError(''); 
 
     try {
+      // Log the request payload for debugging
+      // console.log('Login Request Payload:', { username, password, role });
+
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, password, role }),
       });
 
       if (response.ok) {
         const data = await response.json();
         localStorage.setItem('token', data.token);
-        navigate('/student-dashboard');
+        localStorage.setItem('role', data.role);
+
+        // Redirect based on user role
+        if (data.role === 'admin') {
+          navigate('/admin-dashboard');
+        } else {
+          navigate('/student-dashboard');
+        }
       } else {
         const data = await response.json();
-        setError(data.error || 'Wrong password or username'); // Display error message if login fails
+        setError(data.error || 'Invalid credentials or role');
       }
     } catch (error) {
       console.error('Error logging in:', error);
-      setError('An error occurred. Please try again later.');  // General error message
+      setError('An error occurred. Please try again later.');
     }
   };
 
@@ -47,7 +58,7 @@ function Login() {
       {/* Dark overlay */}
       <div className="absolute inset-0 bg-black opacity-50"></div>
 
-      <div className="relative bg-white p-8 rounded-3xl shadow-xl w-full max-w-md transform transition-all hover:scale-105">
+      <div className="relative bg-white p-8 rounded-3xl shadow-xl w-full max-w-md transform transition-all hover:scale-103">
         <h1 className="text-4xl font-bold text-center text-gray-800 mb-6">Sign In</h1>
 
         <div className="space-y-8">
@@ -57,7 +68,7 @@ function Login() {
           {/* Username Input */}
           <div className="group">
             <label htmlFor="username" className="block text-sm font-semibold text-gray-700">
-              Mobile Number or Student Name
+              Mobile Number or Username
             </label>
             <div className="relative mt-2">
               <input
@@ -66,11 +77,8 @@ function Login() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="w-full p-4 bg-gray-100 rounded-lg text-gray-800 border-2 border-gray-300 focus:ring-4 focus:ring-indigo-500 placeholder-transparent"
-                placeholder="Enter mobile number or student name"
+                placeholder="Enter mobile number or username"
               />
-              <div className="absolute inset-y-0 right-4 flex items-center">
-                <span className="text-gray-500 group-focus:text-indigo-500">📱</span>
-              </div>
             </div>
           </div>
 
@@ -88,16 +96,29 @@ function Login() {
                 className="w-full p-4 bg-gray-100 rounded-lg text-gray-800 border-2 border-gray-300 focus:ring-4 focus:ring-indigo-500 placeholder-transparent"
                 placeholder="Enter OTP or password"
               />
-              <div className="absolute inset-y-0 right-4 flex items-center">
-                <span className="text-gray-500 group-focus:text-indigo-500">🔒</span>
-              </div>
             </div>
+          </div>
+
+          {/* Role Selection */}
+          <div className="group">
+            <label htmlFor="role" className="block text-sm font-semibold text-gray-700">
+              Select Role
+            </label>
+            <select
+              id="role"
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+              className="w-full p-4 bg-gray-100 rounded-lg text-gray-800 border-2 border-gray-300 focus:ring-4 focus:ring-indigo-500"
+            >
+              <option value="student">Student</option>
+              <option value="admin">Admin</option>
+            </select>
           </div>
 
           {/* Login Button */}
           <button
             onClick={handleLogin}
-            className="w-full py-4 bg-gradient-to-r from-indigo-600 to-pink-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transform transition-all hover:scale-105"
+            className="w-full py-4 bg-gradient-to-r from-indigo-600 to-pink-600 text-white font-semibold rounded-lg shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transform transition-all hover:scale-104"
           >
             Login
           </button>

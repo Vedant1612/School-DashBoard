@@ -10,12 +10,17 @@ function EditProfile() {
     lastName: "",
     email: "",
     mobile: "",
-    address: "",
+    address: {
+      street: "",
+      city: "",
+      state: "",
+      zip: "",
+    },
     fathersName: "",
     mothersName: "",
     profilePic: null,
   });
-  
+
   const [profileCompletion, setProfileCompletion] = useState(0);  
   const navigate = useNavigate();
   const location = useLocation();
@@ -28,7 +33,12 @@ function EditProfile() {
         lastName: data.lastName,
         email: data.email,
         mobile: data.mobile,
-        address: data.address,
+        address: data.address || {
+          street: "",
+          city: "",
+          state: "",
+          zip: "",
+        },
         fathersName: data.fathersName,
         mothersName: data.mothersName,
         profilePic: null,
@@ -45,7 +55,23 @@ function EditProfile() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  
+    // Check if name belongs to the 'address' object
+    if (['street', 'city', 'state', 'zip'].includes(name)) {
+      setFormData({
+        ...formData,
+        address: {
+          ...formData.address,
+          [name]: value,
+        },
+      });
+    } else {
+      // If name is not part of the address, update other fields
+      setFormData({
+        ...formData,
+        [name]: value,
+      });
+    }
   };
 
   const handleFileChange = (e) => {
@@ -60,9 +86,11 @@ function EditProfile() {
       formDataObj.append('lastName', formData.lastName);
       formDataObj.append('email', formData.email);
       formDataObj.append('mobile', formData.mobile);
-      formDataObj.append('address', formData.address);
       formDataObj.append('fathersName', formData.fathersName);
       formDataObj.append('mothersName', formData.mothersName);
+
+      // Convert address object into a JSON string before appending
+      formDataObj.append('address', JSON.stringify(formData.address));
 
       if (formData.profilePic) {
         formDataObj.append('profilePic', formData.profilePic);
@@ -155,16 +183,54 @@ function EditProfile() {
               </div>
             </div>
 
-            {/* Address */}
-            <div>
-              <label className="block text-sm font-medium mb-1">Address</label>
-              <textarea
-                name="address"
-                value={formData.address || ""}
-                onChange={handleInputChange}
-                className="w-full border rounded px-3 py-2"
-              ></textarea>
+            {/* Address Fields */}
+            <div className="flex space-x-4">
+              <div className="w-1/2">
+                <label className="block text-sm font-medium mb-1">Street</label>
+                <input
+                  type="text"
+                  name="street"
+                  value={formData.address.street}
+                  onChange={handleInputChange}
+                  className="w-full border rounded px-3 py-2"
+                />
+              </div>
+              <div className="w-1/2">
+                <label className="block text-sm font-medium mb-1">City</label>
+                <input
+                  type="text"
+                  name="city"
+                  value={formData.address.city}
+                  onChange={handleInputChange}
+                  className="w-full border rounded px-3 py-2"
+                />
+              </div>
             </div>
+
+            {/* State and Zip Code Side by Side */}
+            <div className="flex space-x-4">
+              <div className="w-1/2">
+                <label className="block text-sm font-medium mb-1">State</label>
+                <input
+                  type="text"
+                  name="state"
+                  value={formData.address.state}
+                  onChange={handleInputChange}
+                  className="w-full border rounded px-3 py-2"
+                />
+              </div>
+              <div className="w-1/2">
+                <label className="block text-sm font-medium mb-1">Zip Code</label>
+                <input
+                  type="text"
+                  name="zip"
+                  value={formData.address.zip}
+                  onChange={handleInputChange}
+                  className="w-full border rounded px-3 py-2"
+                />
+              </div>
+            </div>
+
 
             {/* Father's Name and Mother's Name Side by Side */}
             <div className="flex space-x-4">
@@ -173,7 +239,7 @@ function EditProfile() {
                 <input
                   type="text"
                   name="fathersName"
-                  value={formData.fathersName || ""}
+                  value={formData.fathersName}
                   onChange={handleInputChange}
                   className="w-full border rounded px-3 py-2"
                 />
@@ -183,7 +249,7 @@ function EditProfile() {
                 <input
                   type="text"
                   name="mothersName"
-                  value={formData.mothersName || ""}
+                  value={formData.mothersName}
                   onChange={handleInputChange}
                   className="w-full border rounded px-3 py-2"
                 />
@@ -191,24 +257,24 @@ function EditProfile() {
             </div>
 
             {/* Profile Picture */}
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium mb-1">Profile Picture</label>
               <input
                 type="file"
-                name="profilePic"
                 onChange={handleFileChange}
                 className="w-full border rounded px-3 py-2"
               />
-            </div>
-          </div>
+            </div> */}
 
-          <div className="mt-6">
-            <button
-              onClick={handleSaveChanges}
-              className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
-            >
-              Save Changes
-            </button>
+            {/* Save Changes Button */}
+            <div className="mt-6 text-center">
+              <button
+                onClick={handleSaveChanges}
+                className="bg-blue-600 text-white rounded px-6 py-2 font-semibold"
+              >
+                Save Changes
+              </button>
+            </div>
           </div>
         </div>
       </div>

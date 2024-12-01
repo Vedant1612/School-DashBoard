@@ -111,12 +111,35 @@ exports.getProfile = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    // Check if address is a stringified JSON and parse it
+    if (user.address && typeof user.address === 'string') {
+      try {
+        user.address = JSON.parse(user.address);
+      } catch (err) {
+        console.error('Error parsing address:', err);
+        user.address = {}; // Set it to empty object if parsing fails
+      }
+    }
+
+    // Format the address to a readable string if it's an object
+    if (user.address && typeof user.address === 'object') {
+      user.address = {
+        street: user.address.street || 'Not Available',
+        city: user.address.city || 'Not Available',
+        state: user.address.state || 'Not Available',
+        zip: user.address.zip || 'Not Available',
+      };
+    }
+
+    // console.log(user);
+    
     res.json(user);
   } catch (error) {
     console.error('Error fetching profile:', error);
     res.status(500).json({ error: 'Failed to fetch profile data' });
   }
 };
+
 
 // Controller to edit profile data
 exports.editProfile = async (req, res) => {

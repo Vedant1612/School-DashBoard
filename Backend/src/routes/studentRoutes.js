@@ -7,7 +7,7 @@ const {
   getProfile,
   viewDocument,
   deleteDocument,
-  editProfile 
+  editProfile,
 } = require('../controllers/studentController');
 const { authenticate } = require('../middleware/authMiddleware');
 const router = express.Router();
@@ -32,5 +32,8 @@ router.delete('/deleteDocument/:fileName', authenticate, deleteDocument);
 
 // Route for editing user profile
 router.put('/editProfile', authenticate, upload, editProfile);  
+
+// Route for admin to register a new student
+// router.post('/registerStudent', authenticate, registerStudent);
 
 module.exports = router;
